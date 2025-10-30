@@ -1,9 +1,13 @@
+require("dotenv").config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
-// Defensive fallback to avoid StrictPopulateError when populating mismatched fields
+console.log("Loaded MONGODB_URI =", process.env.MONGODB_URI);
+
+// Avoid populate errors
 mongoose.set('strictPopulate', false);
 
 const app = express();
@@ -12,7 +16,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Simple route for testing
+// Health Check Route
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'success',
@@ -31,7 +35,7 @@ app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/specializations', require('./routes/specializations'));
 app.use('/api/departments', require('./routes/departments'));
 
-// 404 handler
+// 404 Handler
 app.use('*', (req, res) => {
   res.status(404).json({
     status: 'error',
@@ -39,7 +43,7 @@ app.use('*', (req, res) => {
   });
 });
 
-// Global error handler
+// Global Error Handler
 app.use((err, req, res, next) => {
   console.error('Global error handler:', err);
   res.status(500).json({
@@ -49,23 +53,25 @@ app.use((err, req, res, next) => {
   });
 });
 
-// MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/hospital_management';
+// ✅ MongoDB Atlas Connection
+const MONGODB_URI = process.env.MONGODB_URI;
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log('✅ MongoDB connected successfully'))
+.then(() => console.log('✅ MongoDB Atlas connected successfully'))
 .catch(err => {
-  console.error('❌ MongoDB connection error:', err);
+  console.error('❌ MongoDB Atlas connection error:', err);
   process.exit(1);
 });
 
+// Start Server
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🔗 MongoDB: ${MONGODB_URI}`);
+  console.log(`🔗 MongoDB Atlas URI Loaded from .env`);
+  console.log(`🌍 Server URL: http://localhost:${PORT}`);
+  console.log(`🔍 Test the API: http://localhost:${PORT}/api/health`);
 });

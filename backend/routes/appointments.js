@@ -5,7 +5,6 @@ const Doctor = require('../models/Doctor');
 const { auth, restrictTo } = require('../middleware/auth');
 const router = express.Router();
 
-
 // Get available time slots for a doctor on a specific date
 router.get('/available-slots/:doctorId', auth, async (req, res) => {
   try {
