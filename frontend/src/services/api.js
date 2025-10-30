@@ -1,6 +1,18 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+// Build the API base URL from environment variable when provided.
+// REACT_APP_API_URL can be set to the backend root (with or without a trailing /api).
+const _env = process.env.REACT_APP_API_URL || '';
+let API_BASE_URL = '';
+if (_env) {
+  // normalize: ensure it ends with /api
+  if (_env.endsWith('/api')) API_BASE_URL = _env.replace(/\/+$/, '');
+  else API_BASE_URL = _env.replace(/\/+$/, '') + '/api';
+} else {
+  // Fallbacks: prefer relative /api (useful when frontend is served from same origin)
+  // but also allow local development to work without extra config
+  API_BASE_URL = window?.location?.origin ? `${window.location.origin}/api` : 'http://localhost:5000/api';
+}
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -94,5 +106,6 @@ export {
   createBill,
   getAllBills,
   getPatientBills,
-  getBillById
+  getBillById,
+  API_BASE_URL
 };
