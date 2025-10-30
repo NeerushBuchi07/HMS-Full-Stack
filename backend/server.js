@@ -16,9 +16,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Health Check Route
+// Welcome and Health Check Routes
 app.get('/', (req, res) => {
-  res.json({ status: 'success', message: 'Hospital Management System API is running 🚑' });
+  res.json({
+    status: 'success',
+    message: 'Welcome to Hospital Management System API 🏥',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth',
+      patients: '/api/patients',
+      doctors: '/api/doctors',
+      appointments: '/api/appointments',
+      billing: '/api/billing',
+      notifications: '/api/notifications',
+      specializations: '/api/specializations',
+      departments: '/api/departments'
+    },
+    docs: 'API documentation coming soon'
+  });
 });
 
 // Routes
