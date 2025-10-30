@@ -1,3 +1,5 @@
+const API_BASE_URL = process.env.REACT_APP_API_URL;
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
@@ -21,6 +23,11 @@ import Invoice from './pages/components/Invoice';
 import InvoicePage from './pages/InvoicePage';
 import Services from './pages/Services';
 import './App.css';
+
+export const getHealthStatus = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/health`);
+  return response.json();
+};
 
 function App() {
   return (
