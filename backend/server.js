@@ -17,12 +17,8 @@ app.use(cors());
 app.use(express.json());
 
 // Health Check Route
-app.get('/api/health', (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    message: 'Hospital Management System API is running!',
-    timestamp: new Date().toISOString()
-  });
+app.get('/', (req, res) => {
+  res.json({ status: 'success', message: 'Hospital Management System API is running 🚑' });
 });
 
 // Routes
