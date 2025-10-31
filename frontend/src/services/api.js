@@ -51,24 +51,31 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Handle auth errors
+    // Handle auth errors (401)
     if (error.response?.status === 401) {
-      // Don't auto-redirect for authentication endpoints (login/signup) because
-      // those calls intentionally return 401 for invalid credentials and we want
-      // the UI to display errors instead of being forced back to /login.
       const reqUrl = error.config?.url || '';
       const isLoginOrSignup = reqUrl.includes('/auth/login') || reqUrl.includes('/auth/patient/signup') || reqUrl.includes('/auth/signup');
 
-      // Clear auth data regardless
+      // Log 401 details for debugging
+      /* eslint-disable no-console */
+      console.warn('[api] 401 received for', reqUrl, '; isLoginOrSignup=', isLoginOrSignup);
+      console.debug('[api] full error:', error);
+      /* eslint-enable no-console */
+
+      if (isLoginOrSignup) {
+        // For login/signup failures, do NOT clear localStorage or redirect here.
+        // Let the calling code handle showing the error so the UI can display
+        // invalid credential messages without being reloaded or redirected.
+        return Promise.reject(error);
+      }
+
+      // For other endpoints, clear auth and redirect to login
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       delete api.defaults.headers.common['Authorization'];
 
-      if (!isLoginOrSignup) {
-        // Redirect to login if not already there
-        if (window.location.pathname !== '/login') {
-          window.location.href = '/login';
-        }
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
       }
     }
     return Promise.reject(error);
