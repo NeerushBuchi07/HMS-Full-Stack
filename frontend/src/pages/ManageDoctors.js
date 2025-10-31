@@ -272,36 +272,36 @@ const ManageDoctors = () => {
             <h3 style={styles.headerTitle}>Doctors List</h3>
             {loading ? <p>Loading...</p> : (
               <div className="table-responsive">
-                <table style={styles.table}>
+                <table className="table">
                 <thead>
                   <tr>
-                    <th style={styles.tableHeader}>Doctor ID</th>
-                    <th style={styles.tableHeader}>Name</th>
-                    <th style={styles.tableHeader}>Email</th>
-                    <th style={styles.tableHeader}>Specialization</th>
-                    <th style={styles.tableHeader}>Department</th>
-                    <th style={styles.tableHeader}>Experience</th>
-                    <th style={styles.tableHeader}>Fee</th>
-                    <th style={styles.tableHeader}>Availability</th>
-                    <th style={styles.tableHeader}>Active</th>
-                    <th style={styles.tableHeader}>Actions</th>
+                    <th>Doctor ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Specialization</th>
+                    <th>Department</th>
+                    <th>Experience</th>
+                    <th>Fee</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {doctors.map(d => (
                     <tr key={d._id}>
-                      <td style={styles.tableCell}>{d.doctorId}</td>
-                      <td style={styles.tableCell}>{d.name}</td>
-                      <td style={styles.tableCell}>{d.contact?.email || d.user?.email}</td>
-                      <td style={styles.tableCell}>{d.specialization}</td>
-                      <td style={styles.tableCell}>{d.department}</td>
-                      <td style={styles.tableCell}>{d.experience || 0} yrs</td>
-                      <td style={styles.tableCell}>₹{d.consultationFee}</td>
-                      <td style={styles.tableCell}>{Array.isArray(d.availability?.days) ? d.availability.days.join(', ') : ''}</td>
-                      <td style={styles.tableCell}>
+                      <td>{d.doctorId}</td>
+                      <td>{d.name}</td>
+                      <td>{d.contact?.email || d.user?.email}</td>
+                      <td>{d.specialization}</td>
+                      <td>{d.department}</td>
+                      <td>{d.experience || 0} yrs</td>
+                      <td>₹{d.consultationFee}</td>
+                      <td>
                         <div className="table-actions">
+                          <span className={`status-indicator ${d.isActive ? 'active' : 'inactive'}`}>
+                            {d.isActive ? '● Active' : '○ Inactive'}
+                          </span>
                           <button 
-                            style={{...styles.button, ...styles.primaryButton}} 
+                            className="edit-btn"
                             onClick={() => {
                               handleEdit(d);
                               setActiveTab('add');
@@ -310,13 +310,13 @@ const ManageDoctors = () => {
                             Edit
                           </button>
                           <button 
-                            style={{...styles.button, ...styles.secondaryButton}}
+                            className="deactivate-btn"
                             onClick={() => toggleActive(d)}
                           >
                             {d.isActive ? 'Deactivate' : 'Activate'}
                           </button>
                           <button 
-                            style={{...styles.button, ...styles.deleteButton}}
+                            className="delete-btn"
                             onClick={() => handleDelete(d._id)}
                           >
                             Delete
