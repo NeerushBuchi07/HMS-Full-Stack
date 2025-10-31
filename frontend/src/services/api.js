@@ -53,18 +53,23 @@ api.interceptors.response.use(
   (error) => {
     // Handle auth errors
     if (error.response?.status === 401) {
-      // Clear auth data
+      // Don't auto-redirect for authentication endpoints (login/signup) because
+      // those calls intentionally return 401 for invalid credentials and we want
+      // the UI to display errors instead of being forced back to /login.
+      const reqUrl = error.config?.url || '';
+      const isLoginOrSignup = reqUrl.includes('/auth/login') || reqUrl.includes('/auth/patient/signup') || reqUrl.includes('/auth/signup');
+
+      // Clear auth data regardless
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      
-      // Remove auth header
       delete api.defaults.headers.common['Authorization'];
-      
-      // Redirect to login if not already there
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
+
+      if (!isLoginOrSignup) {
+        // Redirect to login if not already there
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
       }
-      window.location.href = '/login';
     }
     return Promise.reject(error);
   }
