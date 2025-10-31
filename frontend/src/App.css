@@ -59,14 +59,65 @@ body {
   white-space: nowrap;
 }
 
+.table thead {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+}
+
 .table th {
   background-color: #f8f9fa;
   font-weight: 600;
-  color: #495057;
+  color: #2c3e50;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  padding: 16px 15px;
+  border-bottom: none;
+  text-align: left;
+  vertical-align: middle;
 }
 
 .table tbody tr:hover {
   background-color: #f8f9fa;
+}
+
+.table td span {
+  display: block;
+  padding: 2px 0;
+}
+
+.table .id-cell {
+  font-family: 'Consolas', monospace;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.table .name-cell {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.table .email-cell {
+  color: #0066cc;
+  font-size: 0.9rem;
+}
+
+.table .spec-cell,
+.table .dept-cell {
+  font-weight: 500;
+}
+
+.table .exp-cell {
+  text-align: center;
+  background: #f8f9fa;
+  border-radius: 4px;
+  padding: 2px 8px;
+  display: inline-block;
+}
+
+.table .fee-cell {
+  font-weight: 500;
+  color: #28a745;
 }
 
 /* Table Actions Column */
@@ -82,24 +133,48 @@ body {
 .table-actions .status-indicator {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
   font-weight: 500;
-  background-color: #f8f9fa;
-  color: #495057;
-  margin-right: 8px;
+  margin-right: 12px;
+  white-space: nowrap;
 }
 
 .table-actions .status-indicator.active {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: #e8f5e9;
+  color: #1b5e20;
+  border: 1px solid #a5d6a7;
 }
 
 .table-actions .status-indicator.inactive {
-  background-color: #f8d7da;
-  color: #721c24;
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ef9a9a;
+}
+
+.table-actions .edit-btn {
+  background-color: #1976d2;
+  color: white;
+  font-weight: 500;
+}
+
+.table-actions .deactivate-btn {
+  background-color: #757575;
+  color: white;
+  font-weight: 500;
+}
+
+.table-actions .delete-btn {
+  background-color: #d32f2f;
+  color: white;
+  font-weight: 500;
+}
+
+.table-actions button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .table-actions button {

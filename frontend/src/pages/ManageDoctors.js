@@ -275,26 +275,26 @@ const ManageDoctors = () => {
                 <table className="table">
                 <thead>
                   <tr>
-                    <th>Doctor ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
+                    <th>ID</th>
+                    <th>Doctor Name</th>
+                    <th>Email Address</th>
                     <th>Specialization</th>
                     <th>Department</th>
                     <th>Experience</th>
-                    <th>Fee</th>
-                    <th>Actions</th>
+                    <th>Consultation Fee</th>
+                    <th>Status & Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {doctors.map(d => (
                     <tr key={d._id}>
-                      <td>{d.doctorId}</td>
-                      <td>{d.name}</td>
-                      <td>{d.contact?.email || d.user?.email}</td>
-                      <td>{d.specialization}</td>
-                      <td>{d.department}</td>
-                      <td>{d.experience || 0} yrs</td>
-                      <td>₹{d.consultationFee}</td>
+                      <td><span className="id-cell">{d.doctorId}</span></td>
+                      <td><span className="name-cell">Dr. {d.name}</span></td>
+                      <td><span className="email-cell">{d.contact?.email || d.user?.email}</span></td>
+                      <td><span className="spec-cell">{d.specialization}</span></td>
+                      <td><span className="dept-cell">{d.department}</span></td>
+                      <td><span className="exp-cell">{d.experience || 0} years</span></td>
+                      <td><span className="fee-cell">₹{d.consultationFee}</span></td>
                       <td>
                         <div className="table-actions">
                           <span className={`status-indicator ${d.isActive ? 'active' : 'inactive'}`}>
