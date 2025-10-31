@@ -78,6 +78,10 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     try {
+      // Log the full request URL for diagnostics
+      const loginUrl = `${api.defaults.baseURL?.replace(/\/+$/,'')}/auth/login`;
+      console.info('[auth] login URL ->', loginUrl);
+
       const response = await api.post('/auth/login', { email, password });
       
       if (response.data.status === 'success') {
@@ -100,9 +104,20 @@ export function AuthProvider({ children }) {
     } catch (error) {
       // Clear any partial data on error
       logout();
-      return { 
-        success: false, 
-        message: error.response?.data?.message || error.message || 'Login failed' 
+      // Provide detailed error info to aid diagnosis (network, timeout, CORS, etc.)
+      console.error('[auth] login error:', {
+        message: error.message,
+        code: error.code,
+        url: error.config?.url || null,
+        method: error.config?.method || null,
+        status: error.response?.status || null,
+        responseData: error.response?.data || null,
+        request: !!error.request
+      });
+
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message || 'Login failed',
       };
     }
   };
@@ -110,6 +125,9 @@ export function AuthProvider({ children }) {
   const patientSignup = async (data) => {
     try {
       // endpoint: POST /auth/patient/signup
+      const signupUrl = `${api.defaults.baseURL?.replace(/\/+$/,'')}/auth/patient/signup`;
+      console.info('[auth] signup URL ->', signupUrl);
+
       const response = await api.post('/auth/patient/signup', data);
 
       if (response.data.status === 'success') {
@@ -127,6 +145,16 @@ export function AuthProvider({ children }) {
 
       return { success: false, message: response.data.message || 'Signup failed' };
     } catch (error) {
+      console.error('[auth] signup error:', {
+        message: error.message,
+        code: error.code,
+        url: error.config?.url || null,
+        method: error.config?.method || null,
+        status: error.response?.status || null,
+        responseData: error.response?.data || null,
+        request: !!error.request
+      });
+
       return { success: false, message: error.response?.data?.message || error.message || 'Signup failed' };
     }
   };

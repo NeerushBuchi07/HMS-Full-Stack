@@ -16,8 +16,14 @@ if (_env) {
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  // Increase timeout to 30s to allow slower network/backend responses during diagnosis
+  timeout: 30000,
 });
+
+// Log the computed API base URL so deployed frontend consoles reveal which backend it's calling.
+/* eslint-disable no-console */
+console.info('[api] API_BASE_URL =', API_BASE_URL, '; REACT_APP_API_URL=', process.env.REACT_APP_API_URL || '<not set>');
+/* eslint-enable no-console */
 
 // Request interceptor
 api.interceptors.request.use(

@@ -13,7 +13,15 @@ mongoose.set('strictPopulate', false);
 const app = express();
 
 // Middleware
-app.use(cors());
+// Configure CORS: if FRONTEND_URL is set, restrict to that origin; otherwise allow all (useful for initial deployment)
+const frontendOrigin = process.env.FRONTEND_URL || process.env.REACT_APP_API_URL || null;
+if (frontendOrigin) {
+  console.log('CORS: restricting to origin ->', frontendOrigin);
+  app.use(cors({ origin: frontendOrigin }));
+} else {
+  console.log('CORS: allowing all origins (no FRONTEND_URL configured)');
+  app.use(cors());
+}
 app.use(express.json());
 
 // Welcome and Health Check Routes
