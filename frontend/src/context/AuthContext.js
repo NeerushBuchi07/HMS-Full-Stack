@@ -107,6 +107,30 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const patientSignup = async (data) => {
+    try {
+      // endpoint: POST /auth/patient/signup
+      const response = await api.post('/auth/patient/signup', data);
+
+      if (response.data.status === 'success') {
+        const { token, data: respData } = response.data;
+
+        // store token and user
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(respData.user));
+
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        setUser(respData.user);
+
+        return { success: true, data: respData };
+      }
+
+      return { success: false, message: response.data.message || 'Signup failed' };
+    } catch (error) {
+      return { success: false, message: error.response?.data?.message || error.message || 'Signup failed' };
+    }
+  };
+
   const logout = () => {
     // Clear localStorage
     localStorage.removeItem('token');
@@ -123,6 +147,7 @@ export function AuthProvider({ children }) {
   const value = {
     user,
     login,
+    patientSignup,
     logout,
     loading
   };

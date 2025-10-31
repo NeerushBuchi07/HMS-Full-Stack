@@ -1,6 +1,5 @@
 import React from 'react';
 import { API_BASE_URL } from './services/api';
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
@@ -25,8 +24,13 @@ import Services from './pages/Services';
 import './App.css';
 
 export const getHealthStatus = async () => {
-  const response = await fetch(`${API_BASE_URL}/health`);
-  return response.json();
+  try {
+    const response = await fetch(`${API_BASE_URL}/health`);
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching health status:', error);
+    return { status: 'error', message: 'Unable to connect to backend' };
+  }
 };
 
 function App() {
