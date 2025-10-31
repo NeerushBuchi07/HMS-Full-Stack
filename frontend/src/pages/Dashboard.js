@@ -7,7 +7,8 @@ const Dashboard = () => {
   const { user } = useAuth();
 
   return (
-    <div className="container">
+    // use container-fluid for admin pages so content fits full width of the layout
+    <div className="container container-fluid">
       <h1>Admin Dashboard</h1>
       <p>Welcome {user?.fullName || user?.username || 'Admin'}.</p>
 

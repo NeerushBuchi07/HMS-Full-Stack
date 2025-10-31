@@ -26,6 +26,20 @@ body {
   flex: 1;
 }
 
+/* Full-width container useful for admin pages and dashboards */
+.container-fluid {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 1.5rem 2rem;
+}
+
+/* Prevent visual overflow for cards inside wide containers */
+.no-overflow, .dashboard-card {
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
 /* ===== HEADER & NAVIGATION ===== */
 header {
   background-color: #003b66;
@@ -527,8 +541,9 @@ nav {
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
+  /* allow smaller minimum columns so items wrap earlier and avoid horizontal scroll */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.25rem;
   margin-top: 1rem;
 }
 
