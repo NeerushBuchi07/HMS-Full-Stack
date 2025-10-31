@@ -46,7 +46,8 @@ const AllAppointments = () => {
 
         {loading ? <p>Loading...</p> : (
           (appointments.length === 0) ? <p>No appointments available</p> : (
-            <table className="manage-table">
+            <div className="table-responsive">
+              <table className="manage-table">
               <thead><tr><th>ID</th><th>Patient</th><th>Doctor</th><th>Date</th><th>Time</th><th>Purpose</th><th>Status</th><th>Actions</th></tr></thead>
               <tbody>
                 {appointments
@@ -67,8 +68,9 @@ const AllAppointments = () => {
                     <td />
                   </tr>
                 ))}
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
           )
         )}
       </div>

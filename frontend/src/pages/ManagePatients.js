@@ -345,7 +345,8 @@ const ManagePatients = () => {
             {loading ? (
               <p>Loading...</p>
             ) : (
-              <table style={styles.table}>
+              <div className="table-responsive">
+                <table style={styles.table}>
                 <thead>
                   <tr>
                     <th style={styles.tableHeader}>Name</th>
@@ -397,7 +398,8 @@ const ManagePatients = () => {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+                </table>
+              </div>
             )}
           </div>
         ) : (

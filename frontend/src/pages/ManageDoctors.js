@@ -271,7 +271,8 @@ const ManageDoctors = () => {
           <div style={styles.mainContent}>
             <h3 style={styles.headerTitle}>Doctors List</h3>
             {loading ? <p>Loading...</p> : (
-              <table style={styles.table}>
+              <div className="table-responsive">
+                <table style={styles.table}>
                 <thead>
                   <tr>
                     <th style={styles.tableHeader}>Doctor ID</th>
@@ -297,34 +298,36 @@ const ManageDoctors = () => {
                       <td style={styles.tableCell}>{d.experience || 0} yrs</td>
                       <td style={styles.tableCell}>₹{d.consultationFee}</td>
                       <td style={styles.tableCell}>{Array.isArray(d.availability?.days) ? d.availability.days.join(', ') : ''}</td>
-                      <td style={styles.tableCell}>{d.isActive ? 'Yes' : 'No'}</td>
                       <td style={styles.tableCell}>
-                        <button 
-                          style={{...styles.button, ...styles.primaryButton}} 
-                          onClick={() => {
-                            handleEdit(d);
-                            setActiveTab('add');
-                          }}
-                        >
-                          Edit
-                        </button>
-                        <button 
-                          style={{...styles.button, ...styles.secondaryButton}}
-                          onClick={() => toggleActive(d)}
-                        >
-                          {d.isActive ? 'Deactivate' : 'Activate'}
-                        </button>
-                        <button 
-                          style={{...styles.button, ...styles.deleteButton}}
-                          onClick={() => handleDelete(d._id)}
-                        >
-                          Delete
-                        </button>
+                        <div className="table-actions">
+                          <button 
+                            style={{...styles.button, ...styles.primaryButton}} 
+                            onClick={() => {
+                              handleEdit(d);
+                              setActiveTab('add');
+                            }}
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            style={{...styles.button, ...styles.secondaryButton}}
+                            onClick={() => toggleActive(d)}
+                          >
+                            {d.isActive ? 'Deactivate' : 'Activate'}
+                          </button>
+                          <button 
+                            style={{...styles.button, ...styles.deleteButton}}
+                            onClick={() => handleDelete(d._id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
-              </table>
+                </table>
+              </div>
             )}
           </div>
         ) : (

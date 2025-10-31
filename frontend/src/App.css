@@ -785,6 +785,36 @@ nav {
 .ml-2 { margin-left: 0.5rem; }
 .mt-3 { margin-top: 1rem; }
 
+/* Responsive table wrapper to avoid page overflow */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px; /* allow tables to be narrow on small screens but provide baseline */
+}
+
+.table-responsive th,
+.table-responsive td {
+  white-space: normal;
+  word-break: break-word;
+  padding: 12px 16px;
+  vertical-align: top;
+}
+
+/* For action buttons inside tables, allow wrapping and stack on narrow widths */
+.table-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.manage-table th, .manage-table td { padding: 12px 16px; }
+
 /* ===== BUTTONS ===== */
 .btn {
   display: inline-flex;

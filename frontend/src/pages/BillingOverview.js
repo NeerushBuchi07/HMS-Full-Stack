@@ -24,8 +24,9 @@ const BillingOverview = () => {
       <div className="card-compact">
         {loading ? <p>Loading...</p> : (
           bills.length === 0 ? <p>No bills available</p> : (
-            <table className="manage-table">
-              <thead><tr><th>Bill ID</th><th>Patient</th><th>Date</th><th>Total</th><th>Payment Status</th></tr></thead>
+            <div className="table-responsive">
+              <table className="manage-table">
+                <thead><tr><th>Bill ID</th><th>Patient</th><th>Date</th><th>Total</th><th>Payment Status</th></tr></thead>
               <tbody>
                 {bills.map(b => (
                   <tr key={b._id}>
@@ -37,7 +38,8 @@ const BillingOverview = () => {
                   </tr>
                 ))}
               </tbody>
-            </table>
+              </table>
+            </div>
           )
         )}
       </div>

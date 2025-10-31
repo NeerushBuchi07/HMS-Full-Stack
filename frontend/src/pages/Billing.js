@@ -43,7 +43,8 @@ const Billing = () => {
         ) : bills.length === 0 ? (
           <p>No bills found</p>
         ) : (
-          <table className="manage-table">
+          <div className="table-responsive">
+            <table className="manage-table">
             <thead>
               <tr>
                 <th>Bill ID</th>
@@ -66,7 +67,8 @@ const Billing = () => {
                 </tr>
               ))}
             </tbody>
-          </table>
+            </table>
+          </div>
         )}
       </div>
     </div>
