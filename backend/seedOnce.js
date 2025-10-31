@@ -17,7 +17,7 @@ const AllowedAdmin = require('./models/AllowedAdmin');
 const User = require('./models/User');
 const Doctor = require('./models/Doctor');
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/hospital_management';
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://HMS_user:HMS%40123@hms.3m0ey2n.mongodb.net/HMS?retryWrites=true&w=majority&appName=HMS";
 
 const specializations = ['Cardiology', 'Neurology', 'Orthopedics', 'Pediatrics', 'Dermatology', 'ENT'];
 const departments = ['Cardiology', 'Neurology', 'Orthopedics', 'Pediatrics', 'Dermatology', 'ENT'];
@@ -134,8 +134,13 @@ async function upsertDoctors() {
       }
     }
 
-    // Upsert Doctor profile by contact.email or name
+    // Upsert Doctor profile by contact.email or name. Ensure a unique doctorId is
+    // created on insert to avoid duplicate-key errors on a unique doctorId index.
     const filter = { 'contact.email': email };
+
+    // Generate a likely-unique doctorId for insertion
+    const genDoctorId = () => 'DOC' + Date.now().toString().slice(-6) + Math.random().toString(36).slice(2, 8).toUpperCase();
+
     const update = {
       $set: {
         name: doc.name,
@@ -147,11 +152,46 @@ async function upsertDoctors() {
         experience: doc.experience,
         consultationFee: doc.consultationFee,
         user: user._id
+      },
+      $setOnInsert: {
+        doctorId: genDoctorId()
       }
     };
 
-    const res = await Doctor.findOneAndUpdate(filter, update, { upsert: true, new: true, setDefaultsOnInsert: true });
-    if (res) console.log('Upserted doctor profile for:', doc.name);
+    // Try upsert, retrying once if we hit a duplicate-key on doctorId
+    let attempts = 0;
+    while (attempts < 3) {
+      try {
+        const res = await Doctor.findOneAndUpdate(filter, update, { upsert: true, new: true, setDefaultsOnInsert: true });
+        if (res) console.log('Upserted doctor profile for:', doc.name);
+        break;
+      } catch (err) {
+        // If duplicate key on doctorId=null or doctorId, regenerate and retry
+        if (err && err.code === 11000 && err.keyPattern && err.keyPattern.doctorId) {
+          console.warn('Duplicate doctorId encountered, regenerating id and retrying...');
+          update.$setOnInsert.doctorId = genDoctorId();
+          attempts++;
+          continue;
+        }
+        throw err;
+      }
+    }
+  }
+}
+
+// Fix any existing doctor documents that have null/undefined doctorId by assigning them unique ids
+async function fixNullDoctorIds() {
+  const docs = await Doctor.find({ $or: [{ doctorId: null }, { doctorId: { $exists: false } }] });
+  for (const d of docs) {
+    d.doctorId = 'DOC' + Date.now().toString().slice(-6) + Math.random().toString(36).slice(2, 8).toUpperCase();
+    try {
+      await d.save();
+      console.log('Assigned doctorId to existing doctor:', d.name || d._id, '->', d.doctorId);
+    } catch (err) {
+      console.warn('Failed to assign doctorId for', d._id, err.message);
+    }
+    // small delay to help ensure unique Date.now() portions if many docs
+    await new Promise((r) => setTimeout(r, 10));
   }
 }
 
@@ -161,10 +201,12 @@ async function main() {
     await mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
     console.log('Connected to MongoDB');
 
-    await upsertSpecializations();
-    await upsertDepartments();
-    await upsertAdmins();
-    await upsertDoctors();
+      await upsertSpecializations();
+      await upsertDepartments();
+      await upsertAdmins();
+      // First fix any existing doctor documents missing doctorId to prevent duplicate key errors
+      await fixNullDoctorIds();
+      await upsertDoctors();
 
     console.log('Seeding (idempotent) completed successfully');
     process.exit(0);
