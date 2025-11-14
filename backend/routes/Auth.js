@@ -12,6 +12,39 @@ const signToken = (id) => {
   });
 };
 
+// Lightweight helper to report whether an email/username is available before form submission
+router.get('/availability', async (req, res) => {
+  try {
+    const email = (req.query.email || '').toLowerCase().trim();
+    const username = (req.query.username || '').trim();
+
+    const [emailUser, usernameUser] = await Promise.all([
+      email ? User.findOne({ email }) : null,
+      username ? User.findOne({ username }) : null
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        email: {
+          value: email,
+          available: email ? !emailUser : true
+        },
+        username: {
+          value: username,
+          available: username ? !usernameUser : true
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Availability check error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Unable to check availability at the moment'
+    });
+  }
+});
+
 // Patient Signup
 router.post('/patient/signup', async (req, res) => {
   try {

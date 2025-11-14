@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import api from '../services/api';
 
 const PatientSignup = () => {
   const [formData, setFormData] = useState({
@@ -17,9 +18,72 @@ const PatientSignup = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [availability, setAvailability] = useState({
+    email: { available: true, status: 'idle', message: '' },
+    username: { available: true, status: 'idle', message: '' }
+  });
+  const [checking, setChecking] = useState(false);
+  const availabilityAbortRef = useRef(null);
   
   const { patientSignup } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const email = formData.email.trim();
+    const username = formData.username.trim();
+
+    if (!email && !username) {
+      setAvailability({
+        email: { available: true, status: 'idle', message: '' },
+        username: { available: true, status: 'idle', message: '' }
+      });
+      return;
+    }
+
+    if (availabilityAbortRef.current) {
+      availabilityAbortRef.current.abort();
+    }
+
+    const controller = new AbortController();
+    availabilityAbortRef.current = controller;
+
+    const debounce = setTimeout(async () => {
+      setChecking(true);
+      try {
+        const response = await api.get('/auth/availability', {
+          params: { email, username },
+          signal: controller.signal
+        });
+        const data = response.data.data;
+        setAvailability({
+          email: {
+            available: data.email.available,
+            status: 'checked',
+            message: data.email.available ? 'Email available' : 'Email already in use'
+          },
+          username: {
+            available: data.username.available,
+            status: 'checked',
+            message: data.username.available ? 'Username available' : 'Username already in use'
+          }
+        });
+      } catch (err) {
+        if (err.code !== 'ERR_CANCELED') {
+          setAvailability(prev => ({
+            email: { ...prev.email, status: 'error', message: 'Could not verify email' },
+            username: { ...prev.username, status: 'error', message: 'Could not verify username' }
+          }));
+        }
+      } finally {
+        setChecking(false);
+      }
+    }, 400);
+
+    return () => {
+      clearTimeout(debounce);
+      controller.abort();
+    };
+  }, [formData.email, formData.username]);
 
   const handleChange = (e) => {
     setFormData({
@@ -42,6 +106,12 @@ const PatientSignup = () => {
 
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters long');
+      setLoading(false);
+      return;
+    }
+
+    if (!availability.email.available || !availability.username.available) {
+      setError('Please choose a unique email and username before signing up');
       setLoading(false);
       return;
     }
@@ -92,6 +162,11 @@ const PatientSignup = () => {
               className="form-control"
               required
             />
+            {availability.username.status === 'checked' && (
+              <small className={availability.username.available ? 'text-success' : 'text-danger'}>
+                {availability.username.message}
+              </small>
+            )}
           </div>
 
           <div className="form-group">
@@ -104,6 +179,12 @@ const PatientSignup = () => {
               className="form-control"
               required
             />
+            {checking && <small className="text-muted">Checking availability…</small>}
+            {availability.email.status === 'checked' && (
+              <small className={availability.email.available ? 'text-success' : 'text-danger'}>
+                {availability.email.message}
+              </small>
+            )}
           </div>
 
           <div className="form-group">
