@@ -240,6 +240,19 @@ const BookAppointment = () => {
       } else if (error.response?.status === 403) {
         errorMessage = 'You are not authorized to update this appointment.';
       }
+
+      if (appointmentId) {
+        try {
+          await api.delete(`/appointments/${appointmentId}`);
+          window.dispatchEvent(new CustomEvent('appointmentCancelled', {
+            detail: { doctorId: formData.doctorId, date: formData.date }
+          }));
+        } catch (cleanupError) {
+          console.error('Failed to cleanup pending appointment after payment error:', cleanupError);
+        } finally {
+          setAppointmentId(null);
+        }
+      }
       
       alert(errorMessage);
       setShowPayment(false);  // Close payment form on error

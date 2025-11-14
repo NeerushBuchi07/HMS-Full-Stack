@@ -214,6 +214,57 @@ router.patch('/:id', auth, async (req, res) => {
   }
 });
 
+// Delete appointment (patients can remove their own pending appointments when payment fails)
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const appointment = await Appointment.findById(id);
+
+    if (!appointment) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Appointment not found'
+      });
+    }
+
+    const patient = await Patient.findOne({ user: req.user._id });
+
+    const isOwnerPatient = patient && appointment.patient.toString() === patient._id.toString();
+    const canDelete =
+      req.user.role === 'admin' ||
+      req.user.role === 'staff' ||
+      req.user.role === 'doctor' ||
+      isOwnerPatient;
+
+    if (!canDelete) {
+      return res.status(403).json({
+        status: 'error',
+        message: 'Not authorized to delete this appointment'
+      });
+    }
+
+    if (req.user.role === 'patient' && !['Pending', 'Cancelled'].includes(appointment.status)) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Only pending appointments can be deleted by patients'
+      });
+    }
+
+    await appointment.deleteOne();
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Appointment removed'
+    });
+  } catch (error) {
+    console.error('Error deleting appointment:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Error deleting appointment'
+    });
+  }
+});
+
 // Helper function to generate time slots
 function generateTimeSlots(availability, existingAppointments, selectedDateStr, clientNow = new Date()) {
   const timeSlots = [];
