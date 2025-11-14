@@ -105,7 +105,7 @@ export function AuthProvider({ children }) {
       // Clear any partial data on error
       logout();
       // Provide detailed error info to aid diagnosis (network, timeout, CORS, etc.)
-      console.error('[auth] login error:', {
+      const errorDetails = {
         message: error.message,
         code: error.code,
         url: error.config?.url || null,
@@ -113,7 +113,11 @@ export function AuthProvider({ children }) {
         status: error.response?.status || null,
         responseData: error.response?.data || null,
         request: !!error.request
-      });
+      };
+      
+      console.error('[auth] login error:', errorDetails);
+      console.error('[auth] Backend error message:', error.response?.data?.message);
+      console.error('[auth] Full response data:', error.response?.data);
 
       return {
         success: false,
@@ -145,7 +149,7 @@ export function AuthProvider({ children }) {
 
       return { success: false, message: response.data.message || 'Signup failed' };
     } catch (error) {
-      console.error('[auth] signup error:', {
+      const errorDetails = {
         message: error.message,
         code: error.code,
         url: error.config?.url || null,
@@ -153,7 +157,11 @@ export function AuthProvider({ children }) {
         status: error.response?.status || null,
         responseData: error.response?.data || null,
         request: !!error.request
-      });
+      };
+      
+      console.error('[auth] signup error:', errorDetails);
+      console.error('[auth] Backend error message:', error.response?.data?.message);
+      console.error('[auth] Full response data:', error.response?.data);
 
       return { success: false, message: error.response?.data?.message || error.message || 'Signup failed' };
     }
