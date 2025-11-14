@@ -9,7 +9,7 @@ const router = express.Router();
 router.get('/available-slots/:doctorId', auth, async (req, res) => {
   try {
     const { doctorId } = req.params;
-    const { date } = req.query;
+    const { date, timezoneOffset } = req.query;
 
     if (!date) {
       return res.status(400).json({
@@ -42,8 +42,12 @@ router.get('/available-slots/:doctorId', auth, async (req, res) => {
       status: { $in: ['Confirmed', 'Pending'] }
     });
 
-  // Generate available time slots (30-minute intervals)
-  const availableSlots = generateTimeSlots(doctor.availability, existingAppointments, date);
+    const parsedOffset = parseInt(timezoneOffset, 10);
+    const offsetMinutes = Number.isFinite(parsedOffset) ? parsedOffset : 0;
+    const clientNow = new Date(Date.now() - offsetMinutes * 60 * 1000);
+
+    // Generate available time slots (30-minute intervals)
+    const availableSlots = generateTimeSlots(doctor.availability, existingAppointments, date, clientNow);
 
     res.status(200).json({
       status: 'success',
@@ -211,17 +215,19 @@ router.patch('/:id', auth, async (req, res) => {
 });
 
 // Helper function to generate time slots
-function generateTimeSlots(availability, existingAppointments, selectedDateStr) {
+function generateTimeSlots(availability, existingAppointments, selectedDateStr, clientNow = new Date()) {
   const timeSlots = [];
   
   // Convert time to minutes for easier calculation
   const startTime = parseInt(availability.startTime.split(':')[0]) * 60 + parseInt(availability.startTime.split(':')[1]);
   const endTime = parseInt(availability.endTime.split(':')[0]) * 60 + parseInt(availability.endTime.split(':')[1]);
 
-  // Determine if selected date is today
-  const today = new Date();
+  // Determine if selected date matches the client's current date (timezone aware)
+  const today = clientNow;
   const selectedDate = new Date(selectedDateStr);
-  const isToday = today.toDateString() === selectedDate.toDateString();
+  const formatDate = (date) => `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+  const selectedDateString = selectedDateStr?.split('T')[0] || formatDate(selectedDate);
+  const isToday = formatDate(today) === selectedDateString;
 
   // Current time in minutes (only relevant if selected date is today)
   const nowMinutes = isToday ? (today.getHours() * 60 + today.getMinutes()) : null;

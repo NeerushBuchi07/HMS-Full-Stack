@@ -88,7 +88,10 @@ const BookAppointment = () => {
 
   const fetchAvailableSlots = async (doctorId, date) => {
     try {
-      const response = await api.get(`/appointments/available-slots/${doctorId}?date=${date}`);
+      const timezoneOffset = new Date().getTimezoneOffset();
+      const response = await api.get(`/appointments/available-slots/${doctorId}`, {
+        params: { date, timezoneOffset }
+      });
       setAvailableSlots(response.data.data.availableSlots);
     } catch (error) {
       console.error('Error fetching available slots:', error);
@@ -201,13 +204,20 @@ const BookAppointment = () => {
       }
       const patientId = patientResponse.data.data.patient._id;
 
+      const paymentModeMap = {
+        card: 'Card',
+        upi: 'UPI',
+        qr: 'QR'
+      };
+      const normalizedPaymentMode = paymentModeMap[paymentDetails.method] || 'Card';
+
       // First create the bill
       const billingResponse = await api.post('/billing', {
         appointmentId,
         patient: patientId,
         doctorId: formData.doctorId,
         amount: selectedDoctor.consultationFee,
-        paymentMode: paymentDetails.method.toUpperCase(),
+        paymentMode: normalizedPaymentMode,
         paymentStatus: 'Paid',
         paymentDetails: paymentDetails.details
       });
