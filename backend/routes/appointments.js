@@ -31,15 +31,15 @@ router.get('/available-slots/:doctorId', auth, async (req, res) => {
     const startOfDay = new Date(selectedDate.setHours(0, 0, 0, 0));
     const endOfDay = new Date(selectedDate.setHours(23, 59, 59, 999));
 
-    // Only consider CONFIRMED appointments as booked slots. Pending appointments will not block a slot
-    // so users can attempt payment before the slot is finally reserved.
+    // Consider both CONFIRMED and PENDING appointments as booked slots
+    // This ensures that when a patient books an appointment, the slot is immediately shown as booked
     const existingAppointments = await Appointment.find({
       doctor: doctorId,
       date: {
         $gte: startOfDay,
         $lte: endOfDay
       },
-      status: 'Confirmed'
+      status: { $in: ['Confirmed', 'Pending'] }
     });
 
   // Generate available time slots (30-minute intervals)
@@ -232,10 +232,11 @@ function generateTimeSlots(availability, existingAppointments, selectedDateStr) 
     const minutes = time % 60;
     const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
     
-    // Check if slot is booked by a confirmed appointment
+    // Check if slot is booked by a confirmed or pending appointment
     const isBooked = existingAppointments.some(apt => apt.time === timeString);
 
-    // If selected date is today, also block slots that are at or before the current time
+    // If selected date is today, also block slots that are in the past or currently ongoing
+    // For example, if it's 9:40 AM now, the 9:30 AM slot should be unavailable
     const isPastOrNow = isToday && nowMinutes !== null && (time <= nowMinutes);
 
     timeSlots.push({
