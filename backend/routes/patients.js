@@ -203,7 +203,7 @@ router.patch('/:id', auth, async (req, res) => {
 // Delete patient (admin only)
 router.delete('/:id', auth, restrictTo('admin'), async (req, res) => {
   try {
-    const patient = await Patient.findByIdAndDelete(req.params.id);
+    const patient = await Patient.findById(req.params.id);
     
     if (!patient) {
       return res.status(404).json({
@@ -212,9 +212,30 @@ router.delete('/:id', auth, restrictTo('admin'), async (req, res) => {
       });
     }
 
-    res.status(204).json({
+    // Delete associated user account if exists
+    if (patient.user) {
+      const User = require('../models/User');
+      await User.findByIdAndDelete(patient.user);
+      console.log('Deleted associated user account:', patient.user);
+    }
+
+    // Delete all appointments for this patient
+    const Appointment = require('../models/Appointment');
+    await Appointment.deleteMany({ patient: patient._id });
+    console.log('Deleted appointments for patient:', patient._id);
+
+    // Delete all billing records for this patient
+    const Billing = require('../models/Billing');
+    await Billing.deleteMany({ patient: patient._id });
+    console.log('Deleted billing records for patient:', patient._id);
+
+    // Finally delete the patient record
+    await Patient.findByIdAndDelete(req.params.id);
+    console.log('Deleted patient:', patient._id);
+
+    res.status(200).json({
       status: 'success',
-      data: null
+      message: 'Patient and all associated records deleted successfully'
     });
   } catch (error) {
     console.error('Error deleting patient:', error);
