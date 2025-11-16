@@ -20,6 +20,7 @@ const PatientDashboard = () => {
   const [canceling, setCanceling] = useState(false);
   const [cancelingAppointmentId, setCancelingAppointmentId] = useState(null);
   const [toast, setToast] = useState(null);
+  const [openMenuId, setOpenMenuId] = useState(null);
   // Profile edit state
   const [editMode, setEditMode] = useState(false);
   const [formState, setFormState] = useState(null);
@@ -36,6 +37,20 @@ const PatientDashboard = () => {
     fetchPatientData();
     fetchAppointments();
   }, [user, navigate]);
+
+  // Close dropdown menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (openMenuId && !event.target.closest('.action-menu-wrapper')) {
+        setOpenMenuId(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [openMenuId]);
 
   const fetchPatientData = async () => {
     try {
@@ -377,21 +392,36 @@ const PatientDashboard = () => {
                           </span>
                         </div>
                         <div className="appointment-actions">
-                            <div className="action-stack">
-                              <button className="btn btn-outline btn-sm">
-                                View Details
-                              </button>
-                              {appointment.status !== 'Cancelled' && (
-                                <button
-                                  className={`btn btn-danger btn-sm mt-2`} 
-                                  onClick={() => handleCancelAppointment(appointment._id)}
-                                  disabled={canceling && cancelingAppointmentId === appointment._id}
-                                  title={canceling && cancelingAppointmentId === appointment._id ? 'Cancelling...' : 'Cancel Appointment'}
-                                >
-                                  {canceling && cancelingAppointmentId === appointment._id ? 'Cancelling...' : 'Cancel'}
+                          <div className="action-menu-wrapper">
+                            <button 
+                              className="btn-menu-dots"
+                              onClick={() => setOpenMenuId(openMenuId === appointment._id ? null : appointment._id)}
+                              aria-label="More options"
+                            >
+                              <i className="fas fa-ellipsis-v"></i>
+                            </button>
+                            {openMenuId === appointment._id && (
+                              <div className="dropdown-menu">
+                                <button className="dropdown-item">
+                                  <i className="fas fa-eye"></i> View Details
                                 </button>
-                              )}
-                            </div>
+                                {appointment.status !== 'Cancelled' && (
+                                  <button
+                                    className="dropdown-item danger"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setOpenMenuId(null);
+                                      handleCancelAppointment(appointment._id);
+                                    }}
+                                    disabled={canceling && cancelingAppointmentId === appointment._id}
+                                  >
+                                    <i className="fas fa-times-circle"></i>
+                                    {canceling && cancelingAppointmentId === appointment._id ? 'Cancelling...' : 'Cancel'}
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
                         </div>
                         </div>
                       );
