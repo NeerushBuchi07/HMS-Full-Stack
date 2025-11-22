@@ -1,17 +1,6 @@
 <div align="center">
 
 # 🏥 Hospital Management System (HMS)
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js](https://img.shields.io/badge/Node.js-v18+-green.svg)](https://nodejs.org/)
-[![React](https://img.shields.io/badge/React-v18.2-blue.svg)](https://reactjs.org/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-v7+-brightgreen.svg)](https://www.mongodb.com/)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
-
-**A comprehensive, modern Hospital Management System built with MERN stack**
-
-[Features](#-features) • [Installation](#-installation) • [API Documentation](#-api-documentation) • [Contributing](#-contributing)
-
 </div>
 
 ---
@@ -107,11 +96,11 @@ The **Hospital Management System (HMS)** is a full-stack web application designe
 
 ```
 HMS/
-├── backend/                 # Node.js/Express backend
-│   ├── config/             # Database and environment configs
-│   ├── controllers/        # Request handlers
-│   ├── middleware/         # Auth middleware
-│   ├── models/             # Mongoose schemas
+├── backend/
+│   ├── config/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
 │   │   ├── User.js
 │   │   ├── Patient.js
 │   │   ├── Doctor.js
@@ -121,21 +110,21 @@ HMS/
 │   │   ├── Specialization.js
 │   │   ├── Notification.js
 │   │   └── AllowedAdmin.js
-│   ├── routes/             # API routes
-│   ├── scripts/            # Database utilities
-│   ├── seedOnce.js         # Database seeding
-│   └── server.js           # Entry point
+│   ├── routes/
+│   ├── scripts/
+│   ├── seedOnce.js
+│   └── server.js
 │
-├── frontend/               # React frontend
-│   ├── public/            # Static assets
+├── frontend/
+│   ├── public/
 │   ├── src/
-│   │   ├── components/    # Reusable components
-│   │   │   ├── ui/       # Modal, Toast components
+│   │   ├── components/
+│   │   │   ├── ui/
 │   │   │   ├── Navbar.js
 │   │   │   ├── Footer.js
 │   │   │   └── Hero.js
-│   │   ├── context/       # React Context (Auth)
-│   │   ├── pages/         # Page components
+│   │   ├── context/
+│   │   ├── pages/
 │   │   │   ├── Login.js
 │   │   │   ├── PatientSignup.js
 │   │   │   ├── PatientDashboard.js
@@ -145,13 +134,13 @@ HMS/
 │   │   │   ├── FindDoctor.js
 │   │   │   ├── Billing.js
 │   │   │   └── ...
-│   │   ├── services/      # API service layer
-│   │   ├── utils/         # Utility functions
+│   │   ├── services/
+│   │   ├── utils/
 │   │   ├── App.js
 │   │   └── index.js
 │   └── package.json
 │
-├── render.yaml            # Render deployment config
+├── render.yaml
 └── README.md
 ```
 
@@ -432,8 +421,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Neerush Buchi**
 
 - GitHub: [@NeerushBuchi07](https://github.com/NeerushBuchi07)
-- Email: [your-email@example.com](mailto:your-email@example.com)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/your-profile)
+- Email: [neerushbuchi07.com](mailto:neerushbuchi07.com)
+- LinkedIn: [neerushbuchi07](https://linkedin.com/in/neerushbuchi07/)
 
 **Project Link:** [https://github.com/NeerushBuchi07/HMS-Full-Stack](https://github.com/NeerushBuchi07/HMS-Full-Stack)
 
