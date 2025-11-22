@@ -10,7 +10,7 @@
 
 **A comprehensive, modern Hospital Management System built with MERN stack**
 
-[Features](#-features) • [Demo](#-demo) • [Installation](#-installation) • [Documentation](#-documentation) • [Contributing](#-contributing)
+[Features](#-features) • [Installation](#-installation) • [API Documentation](#-api-documentation) • [Contributing](#-contributing)
 
 </div>
 
@@ -29,7 +29,6 @@
 - [Usage](#-usage)
 - [API Documentation](#-api-documentation)
 - [Deployment](#-deployment)
-- [Screenshots](#-screenshots)
 - [Contributing](#-contributing)
 - [License](#-license)
 - [Contact](#-contact)
@@ -368,8 +367,6 @@ This project is configured for easy deployment on Render using `render.yaml`.
 4. **Auto-deployment**
    - Every push to `master` triggers automatic deployment
 
-**Live Demo:** [Your Render URL]
-
 ### Deploy Frontend Separately
 
 For better performance, deploy frontend to Vercel/Netlify:
@@ -379,27 +376,6 @@ cd frontend
 npm run build
 # Upload build/ folder to hosting service
 ```
-
----
-
-## 📸 Screenshots
-
-<details>
-<summary>Click to view screenshots</summary>
-
-### Patient Dashboard
-![Patient Dashboard](./docs/screenshots/patient-dashboard.png)
-
-### Appointment Booking
-![Book Appointment](./docs/screenshots/book-appointment.png)
-
-### Admin Dashboard
-![Admin Dashboard](./docs/screenshots/admin-dashboard.png)
-
-### Doctor Management
-![Manage Doctors](./docs/screenshots/manage-doctors.png)
-
-</details>
 
 ---
 
@@ -477,6 +453,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **⭐ If you find this project useful, please consider giving it a star! ⭐**
 
-Made with ❤️ by [Neerush Buchi](https://github.com/NeerushBuchi07)
+Made with ❤️ by Neerush Buchi, Deepika Reddy, HVS Aditya Sekhar, Sheikh Ashish
 
 </div>
